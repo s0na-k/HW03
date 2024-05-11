@@ -1,0 +1,459 @@
+LOGFile1
+
+Clash File: lse-f-91.stu
+Slots:17, Courses:381, Iters:1000, Shift: 16
+Shift = 16      Min clashes = 34        at step 866
+0       28      20
+1       30      18
+2       23      10
+3       26      2
+4       21      0
+5       21      6
+6       25      14
+7       19      0
+8       20      0
+9       20      14
+10      22      8
+11      23      4
+12      25      2
+13      21      10
+14      19      2
+15      18      0
+16      20      2
+//reduced the number of iterations to 866 as, that is when it achieves its min clashes
+Shift = 16      Min clashes = 34        at step 105
+0       31      10
+1       24      12
+2       23      2
+3       24      10
+4       23      2
+5       22      4
+6       22      12
+7       25      0
+8       18      2
+9       19      2
+10      19      0
+11      29      0
+12      22      0
+13      20      18
+14      25      30
+15      15      4
+16      20      0
+//reduced the number of iterations to 105 as, that is when it achieves its min clashes
+Shift = 16      Min clashes = 60        at step 101
+0       32      0
+1       26      4
+2       24      8
+3       29      8
+4       24      12
+5       18      2
+6       20      0
+7       23      2
+8       28      16
+9       11      0
+10      17      8
+11      21      6
+12      25      0
+13      24      2
+14      17      8
+15      19      2
+16      23      0
+//The number of min clashes increased, so the results are not progressing, let's try a different approach
+//Lets try: Slots:17, Iter:1
+Shift = 17      Min clashes = 94        at step 1
+0       41      94
+1       76      0
+2       54      0
+3       42      0
+4       29      0
+5       29      0
+6       24      0
+7       16      0
+8       14      0
+9       12      0
+10      12      0
+11      10      0
+12      7       0
+13      6       0
+14      3       0
+15      3       0
+16      3       0
+//Choosing the same prime number for both the slots and the shifts gave us this result, with clashes appearing for the first time slot only that has 41 students, if we try to do more iterations the result won't change as after 17 shifts if the exam keeps clashing in the 17th iteration it will be in the first time slot again, that is actually why we have this picture, with clashes only on the 1st timeslot, and clash-free slots.
+//Now let's try to observe multiples of 17
+Shift = 34      Min clashes = 94        at step 1
+0       41      94
+1       76      0
+2       54      0
+3       42      0
+4       29      0
+5       29      0
+6       24      0
+7       16      0
+8       14      0
+9       12      0
+10      12      0
+11      10      0
+12      7       0
+13      6       0
+14      3       0
+15      3       0
+16      3       0
+//Seems like we will get the same results as before
+//Now let's try a different approach, let's increase the number of shifts
+Slots:17, Iter:100
+Shift = 20      Min clashes = 56        at step 76
+0       33      12
+1       28      12
+2       26      4
+3       25      0
+4       21      0
+5       17      12
+6       27      8
+7       27      6
+8       23      2
+9       25      10
+10      26      10
+11      17      0
+12      15      0
+13      17      6
+14      17      8
+15      21      10
+16      16      0
+//It seems like the number of clashes has decreased but the number of clash-free slots has decreased from 16 to 5
+//What if we try even more shifts
+Shift = 90      Min clashes = 62        at step 86
+0       25      4
+1       23      0
+2       25      0
+3       27      6
+4       22      8
+5       16      0
+6       19      4
+7       22      2
+8       27      0
+9       37      16
+10      18      12
+11      16      0
+12      22      8
+13      21      12
+14      26      0
+15      16      10
+16      19      4
+//The number of min clashes has increased, so this was not a successful approach
+//Let's try doing this with a different number of slots, for instance let's choose 31
+Slots:31 Iter: 100
+Shift = 17      Min clashes = 0 at step 2
+0       38      0
+1       72      0
+2       54      0
+3       41      0
+4       27      0
+5       28      0
+6       24      0
+7       16      0
+8       14      0
+9       11      0
+10      12      0
+11      10      0
+12      6       0
+13      6       0
+14      3       0
+15      3       0
+16      3       0
+17      2       0
+18      4       0
+19      2       0
+20      2       0
+21      2       0
+22      1       0
+23      0       0
+24      0       0
+25      0       0
+26      0       0
+27      0       0
+28      0       0
+29      0       0
+30      0       0
+//It seems like we have encountered a clash free state, that is achieved at step 2
+//What if we again try picking the same number of slots and shifts
+Shift = 31      Min clashes = 0 at step 1
+0       38      0
+1       72      0
+2       54      0
+3       41      0
+4       27      0
+5       28      0
+6       24      0
+7       16      0
+8       14      0
+9       11      0
+10      12      0
+11      10      0
+12      6       0
+13      6       0
+14      3       0
+15      3       0
+16      3       0
+17      4       0
+18      2       0
+19      2       0
+20      3       0
+21      1       0
+22      1       0
+23      0       0
+24      0       0
+25      0       0
+26      0       0
+27      0       0
+28      0       0
+29      0       0
+30      0       0
+//It seems like we have 0 exams in some time slots, this means the max num of time slots we can pick is 23
+Slots:23, Iter:100
+Shift = 17      Min clashes = 4 at step 83
+0       24      0
+1       45      0
+2       31      0
+3       27      0
+4       25      0
+5       13      0
+6       22      0
+7       18      0
+8       19      0
+9       19      0
+10      17      0
+11      13      0
+12      16      0
+13      20      0
+14      13      0
+15      12      0
+16      15      12
+17      11      0
+18      11      0
+19      10      4
+//Here we again observe many clash free slots, only two time slots have clashes, with 4 min clashes
+//Since we achieve min clashes at 83rd iteration, let's reduce the number of iterations to 83
+Shift = 17      Min clashes = 4 at step 83
+0       25      0
+1       37      0
+2       40      0
+3       24      0
+4       29      0
+5       17      0
+6       24      0
+7       21      0
+8       14      0
+9       13      0
+10      20      0
+11      16      0
+12      15      0
+13      12      4
+14      13      0
+15      13      0
+16      11      0
+17      16      0
+18      11      0
+19      10      0
+//Now what if we increase the number of shifts to 23
+Shift = 23      Min clashes = 0 at step 16
+0       31      0
+1       52      0
+2       29      0
+3       32      0
+4       20      0
+5       21      0
+6       23      0
+7       21      0
+8       19      0
+9       16      0
+10      14      0
+11      14      0
+12      20      0
+13      15      0
+14      10      0
+15      10      0
+16      10      0
+17      7       0
+18      9       0
+19      8       0
+//We will have a clash-free state
+//What if we increase the number of iterations to 50
+Shift = 50      Min clashes = 10        at step 3
+0       37      18
+1       76      0
+2       54      0
+3       42      0
+4       28      0
+5       29      0
+6       24      0
+7       16      0
+8       14      0
+9       12      0
+10      5       0
+11      11      0
+12      6       0
+13      8       0
+14      3       0
+15      5       0
+16      3       0
+17      4       0
+18      2       0
+19      2       0
+//The number of min clashes will increase, so it was not a good idea
+//Now let's try a different approach, let's pick the number of shifts to be dividers of the number of slots
+//Let's try this on our second file:tre-s-92.stu
+Slots:28, iter: 100
+Shift = 28      Min clashes = 2 at step 1
+0       132     2
+1       31      0
+2       27      0
+3       22      0
+4       20      0
+5       13      0
+6       18      0
+7       10      0
+8       13      0
+9       8       0
+10      9       0
+11      11      0
+12      7       0
+13      7       0
+14      8       0
+15      5       0
+16      5       0
+17      7       0
+18      2       0
+19      5       0
+20      4       0
+21      3       0
+22      3       0
+23      3       0
+24      3       0
+25      2       0
+26      1       0
+27      2       0
+//We have achieved 2 min clashes at step 1, what if try other dividers 
+Shift = 7       Min clashes = 2 at step 9
+0       132     6
+1       31      0
+2       28      0
+3       22      0
+4       20      0
+5       13      0
+6       18      0
+7       3       0
+8       9       0
+9       14      0
+10      8       0
+11      9       0
+12      11      0
+13      7       0
+14      1       0
+15      7       0
+16      8       0
+17      4       0
+18      5       0
+19      7       0
+20      2       0
+21      1       0
+22      5       0
+23      4       0
+24      3       0
+25      3       0
+26      3       0
+27      3       0
+//The number of min clashes seems to be the same, 
+Shift = 4       Min clashes = 8 at step 18
+0       130     0
+1       31      0
+2       28      0
+3       22      0
+4       4       0
+5       18      0
+6       13      0
+7       18      0
+8       2       0
+9       9       0
+10      14      0
+11      8       0
+12      3       0
+13      9       0
+14      11      0
+15      7       0
+16      2       0
+17      7       0
+18      8       0
+19      5       0
+20      2       2
+21      5       0
+22      7       0
+23      2       0
+24      4       10
+25      5       0
+26      4       0
+27      3       0
+//The number of min clashes increased in this case
+//Now what if we try the opposite approach
+Slots:28
+Shift = 56      Min clashes = 2 at step 1
+0       132     2
+1       31      0
+2       27      0
+3       22      0
+4       20      0
+5       13      0
+6       18      0
+7       10      0
+8       13      0
+9       8       0
+10      9       0
+11      11      0
+12      7       0
+13      7       0
+14      8       0
+15      5       0
+16      5       0
+17      7       0
+18      2       0
+19      5       0
+20      4       0
+21      3       0
+22      3       0
+23      3       0
+24      3       0
+25      2       0
+26      1       0
+27      2       0
+//We will observe a similar result
+//Let's try a different multiplier
+Shift = 140     Min clashes = 2 at step 1
+0       132     2
+1       31      0
+2       27      0
+3       22      0
+4       20      0
+5       13      0
+6       18      0
+7       10      0
+8       13      0
+9       8       0
+10      9       0
+11      11      0
+12      7       0
+13      7       0
+14      8       0
+15      5       0
+16      5       0
+17      7       0
+18      2       0
+19      5       0
+20      4       0
+21      3       0
+22      3       0
+23      3       0
+24      3       0
+25      2       0
+26      1       0
+27      2       0
+//Again the same result, at step 1
+
