@@ -1,5 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.Random;
+
 import javax.swing.*;
 
 public class TimeTable extends JFrame implements ActionListener {
@@ -9,7 +12,11 @@ public class TimeTable extends JFrame implements ActionListener {
 	private JTextField field[];
 	private CourseArray courses;
 	private Color CRScolor[] = {Color.RED, Color.GREEN, Color.BLACK};
+	private Autoassociator autoassociator;
+	private BufferedWriter logWriter;
+
 	
+
 	public TimeTable() {
 		super("Dynamic Time Table");
 		setSize(500, 800);
@@ -22,13 +29,22 @@ public class TimeTable extends JFrame implements ActionListener {
 		add(tools);
 		
 		setVisible(true);
+
+		try {
+            logWriter = new BufferedWriter(new FileWriter("timeTableLog.txt", true));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setVisible(true);
 	}
+	
 	
 	public void setTools() {
 		String capField[] = {"Slots:", "Courses:", "Clash File:", "Iters:", "Shift:"};
 		field = new JTextField[capField.length];
 		
-		String capButton[] = {"Load", "Start", "Step", "Print", "Exit", "Continue"};
+		String capButton[] = {"Load", "Start", "Step", "Print", "Exit", "Continue", "Train", "Update"};
 		tool = new JButton[capButton.length];
 		
 		tools.setLayout(new GridLayout(2 * capField.length + capButton.length, 1));
@@ -67,6 +83,24 @@ public class TimeTable extends JFrame implements ActionListener {
 		while (source != tool[result]) result++;
 		return result;
 	}
+
+	private void log(String message) {
+        try {
+            logWriter.write(message + "\n");
+            logWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void configureLogger(int slots, int iterations, int shifts) {
+        try {
+            logWriter.write("Starting timetable algorithm with Slots: " + slots + ", Iterations: " + iterations + ", Shifts: " + shifts + "\n");
+            logWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	public void actionPerformed(ActionEvent click) {
 		int min, step, clashes;
@@ -76,13 +110,18 @@ public class TimeTable extends JFrame implements ActionListener {
 			int slots = Integer.parseInt(field[0].getText());
 			courses = new CourseArray(Integer.parseInt(field[1].getText()) + 1, slots);
 			courses.readClashes(field[2].getText());
+			autoassociator = new Autoassociator(courses);
+			configureLogger(slots, Integer.parseInt(field[3].getText()), Integer.parseInt(field[4].getText()));
+
 			draw();
 			break;
+
 		case 1:
 			min = Integer.MAX_VALUE;
 			step = 0;
+			autoassociator = new Autoassociator(courses);
 			for (int i = 1; i < courses.length(); i++) courses.setSlot(i, 0);
-			
+	
 			for (int iteration = 1; iteration <= Integer.parseInt(field[3].getText()); iteration++) {
 				courses.iterate(Integer.parseInt(field[4].getText()));
 				draw();
@@ -90,8 +129,15 @@ public class TimeTable extends JFrame implements ActionListener {
 				if (clashes < min) {
 					min = clashes;
 					step = iteration;
-				}
+				}		               
+
+				draw();
+				
+
+   
 			}
+			log("Clashes left = " + courses.clashesLeft());
+			log("Final state: Min clashes = " + min + " at step " + step);
 			System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
 			courses.printSlotStatus();
 			setVisible(true);
@@ -112,6 +158,9 @@ public class TimeTable extends JFrame implements ActionListener {
 		case 5:
 			min = Integer.MAX_VALUE;
 			step = 0;
+
+			log("Continuing timetable algorithm with Slots: " + field[0].getText() + ", Iterations: " + Integer.parseInt(field[3].getText()) + ", Shifts: " + Integer.parseInt(field[4].getText()));
+            
 		
 			for (int iteration = 1; iteration <= Integer.parseInt(field[3].getText()); iteration++) {
 				courses.iterate(Integer.parseInt(field[4].getText()));
@@ -121,13 +170,59 @@ public class TimeTable extends JFrame implements ActionListener {
 					min = clashes;
 					step = iteration;
 				}
+						
+                
 			}
+			log("Clashes left = " + courses.clashesLeft());
+			log("Final state: Min clashes = " + min + " at step " + step);
 			System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
 			courses.printSlotStatus();
 			setVisible(true);
+			break;
+
+			case 6: 
+			
+					for (int j = 1; j < courses.length(); j++) {
+						if (courses.status(j) == 0) {
+							int[] timeSlot = courses.getTimeSlot(j);
+							autoassociator.training(timeSlot);
+							log("Trained with time slot: " + j);
+						}
+					}
+					break;
+
+			case 7:
+					min = Integer.MAX_VALUE;
+					step = 0;
+					slots = Integer.parseInt(field[0].getText());
+					for (int iter = 1; iter <= Integer.parseInt(field[3].getText()); iter++) {
+						if (iter%10==0){
+							Random random = new Random();
+        					int index = random.nextInt(slots);
+							autoassociator.unitUpdate(courses.getTimeSlot(index), iter);
+
+						}
+						courses.iterate(Integer.parseInt(field[4].getText()));
+						draw();
+						clashes = courses.clashesLeft();
+						if(clashes < min ){
+							min = clashes;
+							step = iter;
+
+						}
+						log("Min clashes = " + min + " at step " + step);
+						System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
+						courses.printSlotStatus();
+						setVisible(true);
+						log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
+
+
+					}
+
 			
 
 		}
+		
 	}
 
 	public static void main(String[] args) {
