@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Random;
+
 import javax.swing.*;
 
 public class TimeTable extends JFrame implements ActionListener {
@@ -12,6 +14,8 @@ public class TimeTable extends JFrame implements ActionListener {
 	private Color CRScolor[] = {Color.RED, Color.GREEN, Color.BLACK};
 	private Autoassociator autoassociator;
 	private BufferedWriter logWriter;
+
+	
 
 	public TimeTable() {
 		super("Dynamic Time Table");
@@ -27,7 +31,7 @@ public class TimeTable extends JFrame implements ActionListener {
 		setVisible(true);
 
 		try {
-            logWriter = new BufferedWriter(new FileWriter("timeTableLog.txt"));
+            logWriter = new BufferedWriter(new FileWriter("timeTableLog.txt", true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +44,7 @@ public class TimeTable extends JFrame implements ActionListener {
 		String capField[] = {"Slots:", "Courses:", "Clash File:", "Iters:", "Shift:"};
 		field = new JTextField[capField.length];
 		
-		String capButton[] = {"Load", "Start", "Step", "Print", "Exit", "Continue"};
+		String capButton[] = {"Load", "Start", "Step", "Print", "Exit", "Continue", "Train", "Update"};
 		tool = new JButton[capButton.length];
 		
 		tools.setLayout(new GridLayout(2 * capField.length + capButton.length, 1));
@@ -115,13 +119,9 @@ public class TimeTable extends JFrame implements ActionListener {
 		case 1:
 			min = Integer.MAX_VALUE;
 			step = 0;
+			autoassociator = new Autoassociator(courses);
 			for (int i = 1; i < courses.length(); i++) courses.setSlot(i, 0);
 	
-			log("Initial state: Clashes left = " + courses.clashesLeft());
-
-			int iterations = Integer.parseInt(field[3].getText());
-			int shifts = Integer.parseInt(field[4].getText());
-
 			for (int iteration = 1; iteration <= Integer.parseInt(field[3].getText()); iteration++) {
 				courses.iterate(Integer.parseInt(field[4].getText()));
 				draw();
@@ -129,29 +129,14 @@ public class TimeTable extends JFrame implements ActionListener {
 				if (clashes < min) {
 					min = clashes;
 					step = iteration;
-				}
+				}		               
 
-				log("Iteration " + iteration + ": Clashes left = " + clashes);
-
-                // Train 
-				if (clashes == 0) {
-					for (int j = 1; j < courses.length(); j++) {
-						if (courses.status(j) == 0) {
-							int[] timeSlot = courses.getTimeSlot(j);
-							autoassociator.training(timeSlot);
-							log("Trained with time slot: " + j);
-						}
-					}
-				}
-
-				// Perform unit updates using Autoassociator
-				int[] updatedSlots = autoassociator.chainUpdate(courses.getAllSlots(), shifts);
-				courses.updateSlots(updatedSlots);
 				draw();
-				log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
+				
 
    
 			}
+			log("Clashes left = " + courses.clashesLeft());
 			log("Final state: Min clashes = " + min + " at step " + step);
 			System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
 			courses.printSlotStatus();
@@ -175,10 +160,7 @@ public class TimeTable extends JFrame implements ActionListener {
 			step = 0;
 
 			log("Continuing timetable algorithm with Slots: " + field[0].getText() + ", Iterations: " + Integer.parseInt(field[3].getText()) + ", Shifts: " + Integer.parseInt(field[4].getText()));
-            log("Initial state: Clashes left = " + courses.clashesLeft());
-
-			int continueIterations = Integer.parseInt(field[3].getText());
-			int continueShifts = Integer.parseInt(field[4].getText());
+            
 		
 			for (int iteration = 1; iteration <= Integer.parseInt(field[3].getText()); iteration++) {
 				courses.iterate(Integer.parseInt(field[4].getText()));
@@ -188,9 +170,18 @@ public class TimeTable extends JFrame implements ActionListener {
 					min = clashes;
 					step = iteration;
 				}
-				log("Iteration " + iteration + ": Clashes left = " + clashes);
+						
+                
+			}
+			log("Clashes left = " + courses.clashesLeft());
+			log("Final state: Min clashes = " + min + " at step " + step);
+			System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
+			courses.printSlotStatus();
+			setVisible(true);
+			break;
 
-				if (clashes == 0) {
+			case 6: 
+			
 					for (int j = 1; j < courses.length(); j++) {
 						if (courses.status(j) == 0) {
 							int[] timeSlot = courses.getTimeSlot(j);
@@ -198,21 +189,40 @@ public class TimeTable extends JFrame implements ActionListener {
 							log("Trained with time slot: " + j);
 						}
 					}
-				}
-				
-				// Perform unit updates using Autoassociator
-				int[] updatedSlots = autoassociator.chainUpdate(courses.getAllSlots(), continueShifts);
-                    courses.updateSlots(updatedSlots);
-                    draw();
-                    log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
-			}
-			log("Final state: Min clashes = " + min + " at step " + step);
-			System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
-			courses.printSlotStatus();
-			setVisible(true);
+					break;
+
+			case 7:
+					min = Integer.MAX_VALUE;
+					step = 0;
+					slots = Integer.parseInt(field[0].getText());
+					for (int iter = 1; iter <= Integer.parseInt(field[3].getText()); iter++) {
+						if (iter%10==0){
+							Random random = new Random();
+        					int index = random.nextInt(slots);
+							autoassociator.unitUpdate(courses.getTimeSlot(index), iter);
+
+						}
+						courses.iterate(Integer.parseInt(field[4].getText()));
+						draw();
+						clashes = courses.clashesLeft();
+						if(clashes < min ){
+							min = clashes;
+							step = iter;
+
+						}
+						log("Min clashes = " + min + " at step " + step);
+						System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
+						courses.printSlotStatus();
+						setVisible(true);
+						log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
+
+
+					}
+
 			
 
 		}
+		
 	}
 
 	public static void main(String[] args) {
