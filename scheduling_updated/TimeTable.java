@@ -210,11 +210,11 @@ public class TimeTable extends JFrame implements ActionListener {
 							step = iter;
 
 						}
-						log("Min clashes = " + min + " at step " + step);
+						log("After Autoassociator update: Min clashes = " + min + " at step " + step);
 						System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
 						courses.printSlotStatus();
 						setVisible(true);
-						log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
+						//log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
 
 
 					}
