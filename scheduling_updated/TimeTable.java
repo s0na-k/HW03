@@ -61,9 +61,9 @@ public class TimeTable extends JFrame implements ActionListener {
 			tools.add(tool[i]);
 		}
 		
-		field[0].setText("17");
-		field[1].setText("381");//261
-		field[2].setText("lse-f-91.stu");//"tre-s-92.stu"
+		field[0].setText("20");//17
+		field[1].setText("261");//381
+		field[2].setText("tre-s-92.stu");//"lse-f-91.stu"
 		field[3].setText("1");
 	}
 	
@@ -199,6 +199,7 @@ public class TimeTable extends JFrame implements ActionListener {
 						if (iter%10==0){
 							Random random = new Random();
         					int index = random.nextInt(slots);
+							log("Updating time slot: " + index);
 							autoassociator.unitUpdate(courses.getTimeSlot(index), iter);
 
 						}
@@ -214,7 +215,7 @@ public class TimeTable extends JFrame implements ActionListener {
 						System.out.println("Shift = " + field[4].getText() + "\tMin clashes = " + min + "\tat step " + step);
 						courses.printSlotStatus();
 						setVisible(true);
-						//log("After Autoassociator update: Clashes left = " + courses.clashesLeft());
+						
 
 
 					}
